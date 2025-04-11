@@ -1,13 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TestController;
+use App\Http\Controllers\{
+    AppointmentController,
+    ClientController,
+    PaymentController,
+    TrainerController,
+    TrainingProgramController
+};
 
-Route::get('/', function () {
-    return view('welcome');
-});
-Route::get('/test', [testController::class, 'test']);
-Route::get('/test/create', [TestController::class, 'create']);
-Route::get('/test/{id}', [TestController::class, 'read']);
-Route::put('/test/update/{id}', [TestController::class, 'update']);
-Route::delete('/test/delete/{id}', [TestController::class, 'delete']);
+Route::resource('appointments', AppointmentController::class);
+Route::resource('clients', ClientController::class);
+Route::resource('payments', PaymentController::class);
+Route::resource('trainers', TrainerController::class);
+Route::resource('training-programs', TrainingProgramController::class);

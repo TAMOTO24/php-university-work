@@ -1,3 +1,5 @@
+# config/routes.yaml
+
 controllers:
     resource:
         path: ../src/Controller/

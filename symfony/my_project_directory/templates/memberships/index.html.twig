@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Memberships{% endblock %}
+
+{% block body %}
+    <h1>Memberships</h1>
+
+    <a href="{{ path('memberships_new') }}">Create New Membership</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Member ID</th>
+                <th>Session ID</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for membership in memberships %}
+                <tr>
+                    <td>{{ membership.member_id }}</td>
+                    <td>{{ membership.session_id }}</td>
+                    <td>
+                        <a href="{{ path('memberships_show', {'id': membership.id}) }}">View</a> |
+                        <a href="{{ path('memberships_edit', {'id': membership.id}) }}">Edit</a> |
+                        <a href="{{ path('memberships_delete', {'id': membership.id}) }}">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

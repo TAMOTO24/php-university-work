@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Club Members{% endblock %}
+
+{% block body %}
+    <h1>Club Members</h1>
+
+    <a href="{{ path('club_members_new') }}">Create New Member</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Login</th>
+                <th>Is Trainer</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for member in club_members %}
+                <tr>
+                    <td>{{ member.id }}</td>
+                    <td>{{ member.fullName }}</td>
+                    <td>{{ member.login }}</td>
+                    <td>{{ member.isTrainer ? 'Yes' : 'No' }}</td>
+                    <td>{{ member.mail }}</td>
+                    <td>
+                        <a href="{{ path('club_members_show', {'id': member.id}) }}">View</a> |
+                        <a href="{{ path('club_members_edit', {'id': member.id}) }}">Edit</a> |
+                        <a href="{{ path('club_members_delete', {'id': member.id}) }}">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Trainers{% endblock %}
+
+{% block body %}
+    <h1>Trainers</h1>
+
+    <a href="{{ path('trainers_new') }}">Create New Trainer</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Description</th>
+                <th>Full Name</th>
+                <th>Type</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for trainer in trainers %}
+                <tr>
+                    <td>{{ trainer.id }}</td>
+                    <td>{{ trainer.description }}</td>
+                    <td>{{ trainer.fullName }}</td>
+                    <td>{{ trainer.type }}</td>
+                    <td>
+                        <a href="{{ path('trainers_show', {'id': trainer.id}) }}">View</a> |
+                        <a href="{{ path('trainers_edit', {'id': trainer.id}) }}">Edit</a> |
+                        <a href="{{ path('trainers_delete', {'id': trainer.id}) }}">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

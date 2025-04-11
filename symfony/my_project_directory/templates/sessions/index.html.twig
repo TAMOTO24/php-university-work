@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sessions{% endblock %}
+
+{% block body %}
+    <h1>Sessions</h1>
+
+    <a href="{{ path('sessions_new') }}">Create New Session</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Exercise ID</th>
+                <th>Trainer ID</th>
+                <th>Date Time</th>
+                <th>Location</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for session in sessions %}
+                <tr>
+                    <td>{{ session.id }}</td>
+                    <td>{{ session.exercise.id }}</td>
+                    <td>{{ session.trainer.id }}</td>
+                    <td>{{ session.date_time|date('Y-m-d H:i') }}</td>
+                    <td>{{ session.location }}</td>
+                    <td>
+                        <a href="{{ path('sessions_show', {'id': session.id}) }}">View</a> |
+                        <a href="{{ path('sessions_edit', {'id': session.id}) }}">Edit</a> |
+                        <a href="{{ path('sessions_delete', {'id': session.id}) }}">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
