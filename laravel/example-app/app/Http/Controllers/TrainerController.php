@@ -10,7 +10,8 @@ class TrainerController extends Controller
     public function index()
     {
         $trainers = Trainer::all();
-        return response()->json($trainers);
+
+        return view('trainers.index', compact('trainers'));
     }
 
     public function create()

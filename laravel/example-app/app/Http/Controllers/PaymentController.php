@@ -10,8 +10,9 @@ class PaymentController extends Controller
 {
     public function index()
     {
-        $payments = Payment::with('client')->get();
-        return response()->json($payments);
+        $payments = Payment::all();
+
+        return view('payments.index', compact('payments'));
     }
 
     public function create()
@@ -27,13 +28,13 @@ class PaymentController extends Controller
             'amount' => 'required|numeric',
             'payment_date' => 'required|date_format:H:i',
         ]);
-
-        $payment = Payment::create([
+    
+        Payment::create([
             'client_id' => $request->client_id,
             'amount' => $request->amount,
             'payment_date' => $request->payment_date,
         ]);
-
+    
         return redirect()->route('payments.index');
     }
 
@@ -50,6 +51,7 @@ class PaymentController extends Controller
         return view('payments.edit', compact('payment', 'clients'));
     }
 
+
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -57,14 +59,14 @@ class PaymentController extends Controller
             'amount' => 'required|numeric',
             'payment_date' => 'required|date_format:H:i',
         ]);
-
+    
         $payment = Payment::findOrFail($id);
         $payment->update([
             'client_id' => $request->client_id,
             'amount' => $request->amount,
             'payment_date' => $request->payment_date,
         ]);
-
+    
         return redirect()->route('payments.index');
     }
 

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class TrainingProgram extends Model
 {
     use HasFactory;
+    public $timestamps = false;
 
     protected $fillable = [
         'name',

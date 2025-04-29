@@ -10,7 +10,8 @@ class TrainingProgramController extends Controller
     public function index()
     {
         $trainingPrograms = TrainingProgram::all();
-        return response()->json($trainingPrograms);
+
+        return view('training-programs.index', compact('trainingPrograms'));
     }
 
     public function create()

@@ -14,3 +14,7 @@ Route::resource('clients', ClientController::class);
 Route::resource('payments', PaymentController::class);
 Route::resource('trainers', TrainerController::class);
 Route::resource('training-programs', TrainingProgramController::class);
+
+Route::get('/', function () {
+    return 'Laravel працює! Вітаємо!';
+});

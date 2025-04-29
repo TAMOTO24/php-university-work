@@ -13,7 +13,7 @@ class AppointmentController extends Controller
     public function index()
     {
         $appointments = Appointment::with(['client', 'trainer', 'program'])->get();
-        return response()->json($appointments);
+        return view('appointments.index', compact('appointments'));
     }
 
     public function create()
@@ -30,12 +30,14 @@ class AppointmentController extends Controller
             'client_id' => 'required|exists:clients,id',
             'trainer_id' => 'required|exists:trainers,id',
             'program_id' => 'required|exists:training_programs,id',
+            'appointment_date' => 'required|date',
         ]);
 
         Appointment::create([
             'client_id' => $request->client_id,
             'trainer_id' => $request->trainer_id,
             'program_id' => $request->program_id,
+            'appointment_date' => $request->appointment_date,
         ]);
 
         return redirect()->route('appointments.index');
@@ -53,8 +55,12 @@ class AppointmentController extends Controller
         $clients = Client::all();
         $trainers = Trainer::all();
         $programs = TrainingProgram::all();
-        return view('appointments.edit', compact('appointment', 'clients', 'trainers', 'programs'));
+
+        $appointment_date = \Carbon\Carbon::parse($appointment->appointment_date)->format('Y-m-d\TH:i');
+
+        return view('appointments.edit', compact('appointment', 'clients', 'trainers', 'programs', 'appointment_date'));
     }
+
 
     public function update(Request $request, $id)
     {

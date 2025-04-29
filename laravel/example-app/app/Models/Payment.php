@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Payment extends Model
 {
     use HasFactory;
+    public $timestamps = false;
 
     protected $fillable = [
         'client_id',
@@ -15,7 +16,6 @@ class Payment extends Model
         'payment_date',
     ];
 
-    // Связь с моделью Client
     public function client()
     {
         return $this->belongsTo(Client::class);
