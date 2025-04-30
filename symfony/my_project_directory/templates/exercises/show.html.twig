@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Детали вправи{% endblock %}
+
+{% block body %}
+    <h1>Деталі вправи</h1>
+
+    <div>
+        <p><strong>Назва вправи:</strong> {{ exercise.exercise }}</p>
+        <p><strong>Час (в секундах):</strong> {{ exercise.time }}</p>
+        <p><strong>Назва тренування:</strong> {{ exercise.title }}</p>
+
+        {% if trainer %}
+            <p><strong>Тренер:</strong> {{ trainer.fullName }}</p>
+        {% else %}
+            <p><strong>Тренер:</strong> Немає даних про тренера</p>
+        {% endif %}
+    </div>
+
+    <a href="{{ path('exercises_index') }}">Назад до списку вправ</a>
+{% endblock %}

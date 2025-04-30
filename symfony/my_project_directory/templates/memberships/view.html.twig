@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}View Membership{% endblock %}
+
+{% block body %}
+  <div class="container">
+    <h1>Membership Details</h1>
+
+    <table>
+      <tr>
+        <th>ID</th>
+        <td>{{ membership.id }}</td>
+      </tr>
+      <tr>
+        <th>Name</th>
+        <td>{{ membership.name }}</td>
+      </tr>
+      <tr>
+        <th>Title</th>
+        <td>{{ membership.title }}</td>
+      </tr>
+      <tr>
+        <th>Description</th>
+        <td>{{ membership.description }}</td>
+      </tr>
+    </table>
+
+    <div class="action-buttons">
+      <a href="{{ path('memberships_edit', {'id': membership.id}) }}" class="edit-btn">Edit</a>
+      <form method="POST" action="{{ path('memberships_delete', {'id': membership.id}) }}" style="display:inline;">
+        <input type="hidden" name="_method" value="DELETE">
+        <button type="submit" class="delete-btn">Delete</button>
+      </form>
+    </div>
+
+    <a href="{{ path('memberships_index') }}" class="back-btn">Back to Memberships List</a>
+  </div>
+{% endblock %}
+
+{% block stylesheets %}
+  <style>
+    .container { width: 80%; margin: 0 auto; padding: 20px; }
+    h1 { text-align: center; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+    th { background: #f2f2f2; }
+    tr:hover { background: #f9f9f9; }
+    .action-buttons { margin-top: 20px; }
+    .edit-btn, .delete-btn { padding: 10px 20px; background: #4CAF50; color: #fff; border-radius: 5px; text-decoration: none; }
+    .edit-btn:hover, .delete-btn:hover { background: #45a049; }
+    .back-btn { display: inline-block; margin-top: 20px; color: #4CAF50; text-decoration: none; }
+    .back-btn:hover { text-decoration: underline; }
+    .delete-btn { background: #f44336; }
+    .delete-btn:hover { background: #d32f2f; }
+  </style>
+{% endblock %}

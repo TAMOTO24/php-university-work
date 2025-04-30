@@ -1,10 +1,7 @@
 <?php
-
 namespace App\Controller;
 
 use App\Entity\Sessions;
-use App\Entity\Exercises;
-use App\Entity\ClubMembers;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,29 +15,35 @@ class SessionsController extends AbstractController
     public function index(EntityManagerInterface $em): Response
     {
         $sessions = $em->getRepository(Sessions::class)->findAll();
-        return $this->json($sessions);
+        return $this->render('sessions/index.html.twig', [
+            'sessions' => $sessions
+        ]);
     }
 
-    #[Route('/new', name: 'sessions_new', methods: ['POST'])]
+    #[Route('/new', name: 'sessions_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
-        $exercise = $em->getRepository(Exercises::class)->find($request->request->get('exercise_id'));
-        $trainer = $em->getRepository(ClubMembers::class)->find($request->request->get('trainer_id'));
+        if ($request->isMethod('POST')) {
+            $name = $request->request->get('name');
+            $dateTime = new \DateTime($request->request->get('date_time'));
+            $location = $request->request->get('location');
 
-        if (!$exercise || !$trainer) {
-            return $this->json(['error' => 'Exercise or Trainer not found'], Response::HTTP_BAD_REQUEST);
+            if (empty($name)) {
+                return $this->json(['error' => 'Name is required'], Response::HTTP_BAD_REQUEST);
+            }
+
+            $session = new Sessions();
+            $session->setName($name);
+            $session->setDateTime($dateTime);
+            $session->setLocation($location);
+
+            $em->persist($session);
+            $em->flush();
+
+            return $this->redirectToRoute('sessions_index');
         }
 
-        $session = new Sessions();
-        $session->setExercise($exercise);
-        $session->setTrainer($trainer);
-        $session->setDateTime(new \DateTime($request->request->get('date_time')));
-        $session->setLocation($request->request->get('location'));
-
-        $em->persist($session);
-        $em->flush();
-
-        return $this->json($session, Response::HTTP_CREATED);
+        return $this->render('sessions/new.html.twig');
     }
 
     #[Route('/{id}', name: 'sessions_show', methods: ['GET'])]
@@ -52,38 +55,42 @@ class SessionsController extends AbstractController
             return $this->json(['error' => 'Session not found'], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->json($session);
+        return $this->render('sessions/show.html.twig', [
+            'session' => $session
+        ]);
     }
 
-    #[Route('/{id}/edit', name: 'sessions_edit', methods: ['POST'])]
+    #[Route('/{id}/edit', name: 'sessions_edit', methods: ['GET', 'POST'])]
     public function edit(int $id, Request $request, EntityManagerInterface $em): Response
     {
         $session = $em->getRepository(Sessions::class)->find($id);
-
+    
         if (!$session) {
             return $this->json(['error' => 'Session not found'], Response::HTTP_NOT_FOUND);
         }
-
-        $exercise = $em->getRepository(Exercises::class)->find($request->request->get('exercise_id'));
-        $trainer = $em->getRepository(ClubMembers::class)->find($request->request->get('trainer_id'));
-
-        if ($exercise) {
-            $session->setExercise($exercise);
+    
+        if ($request->isMethod('POST')) {
+            $name = $request->request->get('name');
+            $dateTime = new \DateTime($request->request->get('date_time'));
+            $location = $request->request->get('location');
+    
+            $session->setName($name);
+            $session->setDateTime($dateTime);
+            $session->setLocation($location);
+    
+            $em->flush();
+    
+            return $this->redirectToRoute('sessions_index');
         }
-
-        if ($trainer) {
-            $session->setTrainer($trainer);
-        }
-
-        $session->setDateTime(new \DateTime($request->request->get('date_time')));
-        $session->setLocation($request->request->get('location'));
-
-        $em->flush();
-
-        return $this->json($session);
+    
+        $formattedDateTime = $session->getDateTime()->format('Y-m-d\TH:i');
+    
+        return $this->render('sessions/edit.html.twig', [
+            'session' => $session,
+            'formattedDateTime' => $formattedDateTime,
+        ]);
     }
-
-    #[Route('/{id}', name: 'sessions_delete', methods: ['POST'])]
+    #[Route('/{id}', name: 'sessions_delete', methods: ['DELETE'])]
     public function delete(int $id, EntityManagerInterface $em): Response
     {
         $session = $em->getRepository(Sessions::class)->find($id);
@@ -95,6 +102,6 @@ class SessionsController extends AbstractController
         $em->remove($session);
         $em->flush();
 
-        return $this->json(['message' => 'Session deleted']);
+        return $this->redirectToRoute('sessions_index');
     }
 }

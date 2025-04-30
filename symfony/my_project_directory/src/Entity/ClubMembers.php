@@ -1,30 +1,28 @@
 <?php
+
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
-#[ORM\Table(name: 'club_members')]
+#[ORM\Entity(repositoryClass: 'App\Repository\ClubMembersRepository')]
 class ClubMembers
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private ?int $id = null;
 
-    #[ORM\Column(type: 'text')]
-    private $full_name;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $fullName = null;
 
-    #[ORM\Column(type: 'text')]
-    private $login;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $login = null;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $mail = null;
 
     #[ORM\Column(type: 'boolean')]
-    private $isTrainer;
-
-    #[ORM\Column(type: 'text')]
-    private $mail;
-
-    // Геттеры и сеттеры
+    private bool $is_trainer = false;
 
     public function getId(): ?int
     {
@@ -33,12 +31,12 @@ class ClubMembers
 
     public function getFullName(): ?string
     {
-        return $this->full_name;
+        return $this->fullName;
     }
 
-    public function setFullName(string $full_name): self
+    public function setFullName(string $fullName): self
     {
-        $this->full_name = $full_name;
+        $this->fullName = $fullName;
         return $this;
     }
 
@@ -53,17 +51,6 @@ class ClubMembers
         return $this;
     }
 
-    public function getIsTrainer(): ?bool
-    {
-        return $this->isTrainer;
-    }
-
-    public function setIsTrainer(bool $isTrainer): self
-    {
-        $this->isTrainer = $isTrainer;
-        return $this;
-    }
-
     public function getMail(): ?string
     {
         return $this->mail;
@@ -74,5 +61,15 @@ class ClubMembers
         $this->mail = $mail;
         return $this;
     }
-}
 
+    public function isTrainer(): bool
+    {
+        return $this->is_trainer;
+    }
+
+    public function setIsTrainer(bool $is_trainer): self
+    {
+        $this->is_trainer = $is_trainer;
+        return $this;
+    }
+}

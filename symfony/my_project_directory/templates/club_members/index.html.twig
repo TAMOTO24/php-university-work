@@ -1,38 +1,192 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Club Members{% endblock %}
+{% block title %}Список учасників клубу{% endblock %}
 
 {% block body %}
-    <h1>Club Members</h1>
+<div class="container my-5">
+    <h1 class="text-center mb-4">Список учасників клубу</h1>
 
-    <a href="{{ path('club_members_new') }}">Create New Member</a>
+    <div class="text-right mb-3">
+        <a href="{{ path('club_members_new') }}" class="btn btn-success">Додати учасника</a>
+    </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Full Name</th>
-                <th>Login</th>
-                <th>Is Trainer</th>
-                <th>Email</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for member in club_members %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
                 <tr>
-                    <td>{{ member.id }}</td>
-                    <td>{{ member.fullName }}</td>
-                    <td>{{ member.login }}</td>
-                    <td>{{ member.isTrainer ? 'Yes' : 'No' }}</td>
-                    <td>{{ member.mail }}</td>
-                    <td>
-                        <a href="{{ path('club_members_show', {'id': member.id}) }}">View</a> |
-                        <a href="{{ path('club_members_edit', {'id': member.id}) }}">Edit</a> |
-                        <a href="{{ path('club_members_delete', {'id': member.id}) }}">Delete</a>
-                    </td>
+                    <th>ID</th>
+                    <th>ПІБ</th>
+                    <th>Логін</th>
+                    <th>Роль</th>
+                    <th>Пошта</th>
+                    <th>Дії</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for member in club_members %}
+                    <tr>
+                        <td>{{ member.id }}</td>
+                        <td>{{ member.fullName }}</td>
+                        <td>{{ member.login }}</td>
+                        <td>
+                            {% if member.isTrainer %}
+                                <span class="badge badge-primary">Тренер</span>
+                            {% else %}
+                                <span class="badge badge-secondary">Клієнт</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ member.mail }}</td>
+                        <td class="actionBlock">
+                            <a href="{{ path('club_members_edit', {'id': member.id}) }}" class="btn btn-outline-warning btn-sm">Редагувати</a>
+                            <form action="{{ path('club_members_delete', {'id': member.id}) }}" method="post" class="d-inline" onsubmit="return confirm('Ви впевнені, що хочете видалити цього учасника?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ member.id) }}">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Видалити</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">Учасників немає.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+<style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+        .actionBlock{
+            display: flex;
+            gap: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: collapse;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .thead-light {
+            background-color: #f8f9fa;
+            color: #495057;
+        }
+
+        th, td {
+            padding: 12px 20px;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        td {
+            color: #495057;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            font-size: 0.875rem;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+            border: none;
+        }
+
+        .btn-outline-warning {
+            border: 1px solid #ffc107;
+            color: #ffc107;
+            background-color: transparent;
+        }
+
+        .btn-outline-danger {
+            border: 1px solid #dc3545;
+            color: #dc3545;
+            background-color: transparent;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .badge-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .badge-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        .text-right {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .form-inline {
+            display: inline-block;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px; /* Добавляем промежуток между кнопками */
+            justify-content: center; /* Центрируем кнопки */
+        }
+
+        .confirm-btn {
+            margin-top: 10px;
+        }
+    </style>
 {% endblock %}

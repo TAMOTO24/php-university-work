@@ -21,8 +21,6 @@ class Trainers
     #[ORM\Column(type: 'string')]
     private ?string $type = null;
 
-    // Геттеры и сеттеры
-
     public function getId(): ?int
     {
         return $this->id;

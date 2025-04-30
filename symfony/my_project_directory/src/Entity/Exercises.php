@@ -25,13 +25,6 @@ class Exercises
     #[ORM\Column(type: 'text')]
     private ?string $title = null;
 
-    // Геттеры и сеттеры
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     public function getTrainer(): ?ClubMembers
     {
         return $this->trainer;
@@ -42,6 +35,10 @@ class Exercises
         $this->trainer = $trainer;
         return $this;
     }
+    public function getId(): ?int
+{
+    return $this->id;
+}
 
     public function getExercise(): ?string
     {

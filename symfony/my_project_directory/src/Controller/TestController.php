@@ -15,7 +15,7 @@ final class TestController extends AbstractController
             'controller_name' => 'TestController',
         ]);
     }
-    #[Route('/test/message', name: 'app_test_message')] //Перетворює просту відповідь Response на рядок «Це тестове повідомлення в TestController!».
+    #[Route('/test/message', name: 'app_test_message')] 
     public function testMessage(): Response
     {
         return new Response('Test message from TestController!');
@@ -24,18 +24,15 @@ final class TestController extends AbstractController
     #[Route('/test/create', name: 'app_test_create')]
     public function create(): Response
     {
-        // Створюємо нове "повідомлення" (симуляція)
         $message = 'This is a new message';
 
-        // "Симулюємо" додавання в базу (ми просто виводимо результат)
         return new Response('Message created with text: ' . $message);
     }
 
     #[Route('/test/{id}', name: 'app_test_read')]
     public function read($id): Response
     {
-        // "Симулюємо" пошук повідомлення за id
-        $message = "Message with ID $id"; // Це можна змінити на будь-який текст
+        $message = "Message with ID $id";
 
         return new Response('Message: ' . $message);
     }
@@ -43,7 +40,6 @@ final class TestController extends AbstractController
     #[Route('/test/update/{id}', name: 'app_test_update')]
     public function update($id): Response
     {
-        // "Симулюємо" оновлення повідомлення
         $updatedMessage = "Updated message for ID $id";
 
         return new Response('Message updated to: ' . $updatedMessage);
@@ -52,7 +48,6 @@ final class TestController extends AbstractController
     #[Route('/test/delete/{id}', name: 'app_test_delete')]
     public function delete($id): Response
     {
-        // "Симулюємо" видалення повідомлення
         return new Response('Message with ID ' . $id . ' has been deleted!');
     }
 }

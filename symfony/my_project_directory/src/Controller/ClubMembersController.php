@@ -26,14 +26,25 @@ class ClubMembersController extends AbstractController
         $clubMember = new ClubMembers();
 
         if ($request->isMethod('POST')) {
-            $clubMember->setFullName($request->request->get('full_name'));
-            $clubMember->setLogin($request->request->get('login'));
-            $clubMember->setIsTrainer((bool) $request->request->get('is_trainer'));
-            $clubMember->setMail($request->request->get('mail'));
+            $fullName = $request->request->get('full_name');
+            $login = $request->request->get('login');
+            $isTrainer = (bool) $request->request->get('is_trainer');
+            $mail = $request->request->get('mail');
+
+            if (empty($fullName) || empty($login) || empty($mail)) {
+                $this->addFlash('error', 'Всі поля повинні бути заповнені.');
+                return $this->redirectToRoute('club_members_new');
+            }
+
+            $clubMember->setFullName($fullName);
+            $clubMember->setLogin($login);
+            $clubMember->setIsTrainer($isTrainer);
+            $clubMember->setMail($mail);
 
             $em->persist($clubMember);
             $em->flush();
 
+            $this->addFlash('success', 'Учасника додано успішно!');
             return $this->redirectToRoute('club_members_index');
         }
 
@@ -46,7 +57,7 @@ class ClubMembersController extends AbstractController
         $clubMember = $em->getRepository(ClubMembers::class)->find($id);
 
         if (!$clubMember) {
-            throw $this->createNotFoundException('No club member found for id ' . $id);
+            throw $this->createNotFoundException('Немає учасника з таким ID');
         }
 
         return $this->render('club_members/show.html.twig', [
@@ -60,17 +71,28 @@ class ClubMembersController extends AbstractController
         $clubMember = $em->getRepository(ClubMembers::class)->find($id);
 
         if (!$clubMember) {
-            throw $this->createNotFoundException('No club member found for id ' . $id);
+            throw $this->createNotFoundException('Немає учасника з таким ID');
         }
 
         if ($request->isMethod('POST')) {
-            $clubMember->setFullName($request->request->get('full_name'));
-            $clubMember->setLogin($request->request->get('login'));
-            $clubMember->setIsTrainer((bool) $request->request->get('is_trainer'));
-            $clubMember->setMail($request->request->get('mail'));
+            $fullName = $request->request->get('full_name');
+            $login = $request->request->get('login');
+            $isTrainer = (bool) $request->request->get('is_trainer');
+            $mail = $request->request->get('mail');
+
+            if (empty($fullName) || empty($login) || empty($mail)) {
+                $this->addFlash('error', 'Всі поля повинні бути заповнені.');
+                return $this->redirectToRoute('club_members_edit', ['id' => $id]);
+            }
+
+            $clubMember->setFullName($fullName);
+            $clubMember->setLogin($login);
+            $clubMember->setIsTrainer($isTrainer);
+            $clubMember->setMail($mail);
 
             $em->flush();
 
+            $this->addFlash('success', 'Зміни збережено успішно!');
             return $this->redirectToRoute('club_members_index');
         }
 
@@ -85,11 +107,15 @@ class ClubMembersController extends AbstractController
         $clubMember = $em->getRepository(ClubMembers::class)->find($id);
 
         if (!$clubMember) {
-            throw $this->createNotFoundException('No club member found for id ' . $id);
+            throw $this->createNotFoundException('Немає учасника з таким ID');
         }
 
-        $em->remove($clubMember);
-        $em->flush();
+        if ($request->isMethod('POST') && $this->isCsrfTokenValid('delete' . $id, $request->request->get('_token'))) {
+            $em->remove($clubMember);
+            $em->flush();
+
+            $this->addFlash('success', 'Учасник успішно видалений!');
+        }
 
         return $this->redirectToRoute('club_members_index');
     }

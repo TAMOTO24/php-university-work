@@ -3,34 +3,122 @@
 {% block title %}Trainers{% endblock %}
 
 {% block body %}
-    <h1>Trainers</h1>
+    <div class="container">
+        <h1 class="page-title">Trainers List</h1>
 
-    <a href="{{ path('trainers_new') }}">Create New Trainer</a>
+        <div class="action-button">
+            <a href="{{ path('trainers_new') }}" class="btn btn-primary">Create New Trainer</a>
+        </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Description</th>
-                <th>Full Name</th>
-                <th>Type</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for trainer in trainers %}
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td>{{ trainer.id }}</td>
-                    <td>{{ trainer.description }}</td>
-                    <td>{{ trainer.fullName }}</td>
-                    <td>{{ trainer.type }}</td>
-                    <td>
-                        <a href="{{ path('trainers_show', {'id': trainer.id}) }}">View</a> |
-                        <a href="{{ path('trainers_edit', {'id': trainer.id}) }}">Edit</a> |
-                        <a href="{{ path('trainers_delete', {'id': trainer.id}) }}">Delete</a>
-                    </td>
+                    <th>ID</th>
+                    <th>Full Name</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Actions</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for trainer in trainers %}
+                    <tr>
+                        <td>{{ trainer.id }}</td>
+                        <td>{{ trainer.fullName }}</td>
+                        <td>{{ trainer.description }}</td>
+                        <td>{{ trainer.type }}</td>
+                        <td>
+                            <a href="{{ path('trainers_show', {'id': trainer.id}) }}" class="btn btn-info btn-sm">View</a>
+                            <a href="{{ path('trainers_edit', {'id': trainer.id}) }}" class="btn btn-warning btn-sm">Edit</a>
+                            <form action="{{ path('trainers_delete', {'id': trainer.id}) }}" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="5" class="text-center">No trainers found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .action-button {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: black;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f4f4f4;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        tr {
+            background: #f1f1f1;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+        }
+
+        form {
+            display: inline-block;
+        }
+    </style>
 {% endblock %}

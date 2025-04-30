@@ -3,36 +3,122 @@
 {% block title %}Sessions{% endblock %}
 
 {% block body %}
-    <h1>Sessions</h1>
+  <div class="container">
+    <h1 class="page-title">Sessions</h1>
 
-    <a href="{{ path('sessions_new') }}">Create New Session</a>
+    <div class="action-button">
+      <a href="{{ path('sessions_new') }}" class="btn btn-primary">Create New Session</a>
+    </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Exercise ID</th>
-                <th>Trainer ID</th>
-                <th>Date Time</th>
-                <th>Location</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for session in sessions %}
-                <tr>
-                    <td>{{ session.id }}</td>
-                    <td>{{ session.exercise.id }}</td>
-                    <td>{{ session.trainer.id }}</td>
-                    <td>{{ session.date_time|date('Y-m-d H:i') }}</td>
-                    <td>{{ session.location }}</td>
-                    <td>
-                        <a href="{{ path('sessions_show', {'id': session.id}) }}">View</a> |
-                        <a href="{{ path('sessions_edit', {'id': session.id}) }}">Edit</a> |
-                        <a href="{{ path('sessions_delete', {'id': session.id}) }}">Delete</a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Date</th>
+          <th>Location</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for session in sessions %}
+          <tr>
+            <td>{{ session.id }}</td>
+            <td>{{ session.name }}</td>
+            <td>{{ session.dateTime|date('Y-m-d H:i') }}</td>
+            <td>{{ session.location }}</td>
+            <td>
+              <a href="{{ path('sessions_show', {'id': session.id}) }}" class="btn btn-info btn-sm">View</a>
+              <a href="{{ path('sessions_edit', {'id': session.id}) }}" class="btn btn-warning btn-sm">Edit</a>
+              <form action="{{ path('sessions_delete', {'id': session.id}) }}" method="DELETE" style="display:inline;">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ session.id) }}">
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="5" class="text-center">No sessions found.</td></tr>
+        {% endfor %}
+      </tbody>
     </table>
+  </div>
+{% endblock %}
+
+{% block stylesheets %}
+  <style>
+    .container {
+      width: 80%;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .page-title {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2rem;
+      color: #333;
+    }
+
+    .action-button {
+      text-align: right;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      font-size: 14px;
+      border-radius: 5px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .btn-info {
+      background-color: #17a2b8;
+      color: white;
+    }
+
+    .btn-warning {
+      background-color: #ffc107;
+      color: black;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f4f4f4;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .table-striped tbody tr:nth-child(odd) {
+      background-color: #f2f2f2;
+    }
+  </style>
 {% endblock %}

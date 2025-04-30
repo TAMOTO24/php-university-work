@@ -1,0 +1,39 @@
+{# templates/exercises/new.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Додати нову вправу{% endblock %}
+
+{% block body %}
+    <h1 class="text-center mt-4">Додати нову вправу</h1>
+
+    <form method="post" action="{{ path('exercises_new') }}" class="form-group">
+        <input type="hidden" name="_token" value="{{ csrf_token('new_exercise') }}">
+
+        <div class="form-group">
+            <label for="exercise">Назва вправи</label>
+            <input type="text" id="exercise" name="exercise" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="time">Час (в секундах)</label>
+            <input type="number" id="time" name="time" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="title">Назва тренування</label>
+            <input type="text" id="title" name="title" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="trainer_id">Тренер</label>
+            <select id="trainer_id" name="trainer_id" class="form-control" required>
+                {% for trainer in trainers %}
+                    <option value="{{ trainer.id }}">{{ trainer.fullName }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Додати вправу</button>
+    </form>
+{% endblock %}

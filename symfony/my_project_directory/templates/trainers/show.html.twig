@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Trainer Details{% endblock %}
+
+{% block body %}
+  <div class="container">
+    <h1 class="page-title">Trainer Details</h1>
+
+    <div class="trainer-details">
+      <p><strong>ID:</strong> {{ trainer.id }}</p>
+      <p><strong>Full Name:</strong> {{ trainer.fullName }}</p>
+      <p><strong>Description:</strong> {{ trainer.description }}</p>
+      <p><strong>Type:</strong> {{ trainer.type }}</p>
+    </div>
+
+    <div class="action-buttons">
+      <a href="{{ path('trainers_index') }}" class="btn btn-primary">Back to List</a>
+      <a href="{{ path('trainers_edit', {'id': trainer.id}) }}" class="btn btn-warning">Edit</a>
+      <form action="{{ path('trainers_delete', {'id': trainer.id}) }}" method="post" style="display:inline;">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ trainer.id) }}">
+        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this trainer?')">Delete</button>
+      </form>
+    </div>
+    <style>
+    .container {
+      width: 80%;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .page-title {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background: #f4f4f4;
+    }
+    tr { background: #f9f9f9; }
+    .trainer-details p {
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    .action-buttons {
+      margin-top: 20px;
+    }
+    .btn {
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background-color: #007bff;
+      color: white;
+    }
+    .btn-info {
+      background-color: #17a2b8;
+      color: white;
+    }
+    .btn-warning {
+      background-color: #ffc107;
+      color: black;
+    }
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+  </style>
+  </div>
+{% endblock %}

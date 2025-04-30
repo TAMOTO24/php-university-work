@@ -1,36 +1,130 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Exercises{% endblock %}
+{% block title %}Список вправ{% endblock %}
 
 {% block body %}
-    <h1>Exercises</h1>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+            background-color: #f9f9f9;
+        }
 
-    <a href="{{ path('exercises_new') }}">Create New Exercise</a>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f2f2f2;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            table {
+                font-size: 14px;
+            }
+            .btn {
+                padding: 8px 16px;
+            }
+            .btn-danger {
+                padding: 6px 10px;
+            }
+        }
+    </style>
+
+    <h1 class="text-center mt-4">Список вправ</h1>
+
+    <a class="btn" href="{{ path('exercises_new') }}">Додати нову вправу</a>
 
     <table>
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Trainer ID</th>
-                <th>Exercise</th>
-                <th>Time</th>
-                <th>Title</th>
-                <th>Actions</th>
+                <th>Тренер</th>
+                <th>Вправа</th>
+                <th>Тривалість (сек)</th>
+                <th>Назва</th>
+                <th>Дії</th>
             </tr>
         </thead>
         <tbody>
             {% for exercise in exercises %}
                 <tr>
                     <td>{{ exercise.id }}</td>
-                    <td>{{ exercise.trainerID }}</td>
+                    <td>
+                        {% if exercise.trainer.getFullName() %}
+                            {{ exercise.trainer.getFullName() }}
+                        {% else %}
+                            <em>не вказано</em>
+                        {% endif %}
+                    </td>
                     <td>{{ exercise.exercise }}</td>
                     <td>{{ exercise.time }}</td>
                     <td>{{ exercise.title }}</td>
                     <td>
-                        <a href="{{ path('exercises_show', {'id': exercise.id}) }}">View</a> |
-                        <a href="{{ path('exercises_edit', {'id': exercise.id}) }}">Edit</a> |
-                        <a href="{{ path('exercises_delete', {'id': exercise.id}) }}">Delete</a>
+                        <a href="{{ path('exercises_show', {'id': exercise.id}) }}" aria-label="Переглянути вправу {{ exercise.id }}">Переглянути</a> |
+                        <a href="{{ path('exercises_edit', {'id': exercise.id}) }}" aria-label="Редагувати вправу {{ exercise.id }}">Редагувати</a> |
+                        <form method="post" action="{{ path('exercises_delete', {'id': exercise.id}) }}" style="display:inline;" onsubmit="return confirm('Ви впевнені, що хочете видалити цю вправу?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ exercise.id) }}">
+                            <button class="btn-danger" type="submit" aria-label="Видалити вправу {{ exercise.id }}">Видалити</button>
+                        </form>
                     </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6" class="text-center">Вправи не знайдені.</td>
                 </tr>
             {% endfor %}
         </tbody>

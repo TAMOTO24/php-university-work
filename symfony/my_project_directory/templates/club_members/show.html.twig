@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Details of {{ club_member.fullName }}{% endblock %}
+
+{% block body %}
+    <div class="container my-5">
+        <h1 class="text-center text-primary mb-4">Details of Club Member</h1>
+
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">{{ club_member.fullName }}</h4>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong>Full Name:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        <span>{{ club_member.fullName }}</span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong>Login:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        <span>{{ club_member.login }}</span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong>Trainer:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        {% if club_member.isTrainer %}
+                            <span class="badge badge-success">Yes</span>
+                        {% else %}
+                            <span class="badge badge-danger">No</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong>Email:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        <span>{{ club_member.mail }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer text-right">
+                <a href="{{ path('club_members_edit', {'id': club_member.id}) }}" class="btn btn-warning text-white">Edit</a>
+                <form action="{{ path('club_members_delete', {'id': club_member.id}) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+
+        <a href="{{ path('club_members_index') }}" class="btn btn-secondary mt-4">Back to list</a>
+    </div>
+{% endblock %}

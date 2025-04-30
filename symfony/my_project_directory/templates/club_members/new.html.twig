@@ -1,0 +1,38 @@
+{# templates/club_members/new.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Додати нового учасника{% endblock %}
+
+{% block body %}
+    <h1 class="text-center mt-4">Додати нового учасника</h1>
+
+    <form method="post" action="{{ path('club_members_new') }}" class="form-group">
+        <input type="hidden" name="_token" value="{{ csrf_token('new_member') }}">
+
+        <div class="form-group">
+            <label for="full_name">Ім'я</label>
+            <input type="text" id="full_name" name="full_name" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="login">Логін</label>
+            <input type="text" id="login" name="login" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="mail">Пошта</label>
+            <input type="email" id="mail" name="mail" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="is_trainer">Роль</label>
+            <select id="is_trainer" name="is_trainer" class="form-control">
+                <option value="1">Тренер</option>
+                <option value="0">Клієнт</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Додати учасника</button>
+    </form>
+{% endblock %}

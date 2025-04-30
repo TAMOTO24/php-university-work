@@ -3,30 +3,62 @@
 {% block title %}Memberships{% endblock %}
 
 {% block body %}
+  <div class="container">
     <h1>Memberships</h1>
 
-    <a href="{{ path('memberships_new') }}">Create New Membership</a>
+    <div class="action-button">
+      <a href="{{ path('memberships_new') }}">Create New Membership</a>
+    </div>
 
     <table>
-        <thead>
-            <tr>
-                <th>Member ID</th>
-                <th>Session ID</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for membership in memberships %}
-                <tr>
-                    <td>{{ membership.member_id }}</td>
-                    <td>{{ membership.session_id }}</td>
-                    <td>
-                        <a href="{{ path('memberships_show', {'id': membership.id}) }}">View</a> |
-                        <a href="{{ path('memberships_edit', {'id': membership.id}) }}">Edit</a> |
-                        <a href="{{ path('memberships_delete', {'id': membership.id}) }}">Delete</a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for membership in memberships %}
+          <tr>
+            <td>{{ membership.id }}</td>
+            <td>{{ membership.name }}</td>
+            <td>{{ membership.title }}</td>
+            <td>{{ membership.description }}</td>
+            <td>
+              <a href="{{ path('memberships_show', {'id': membership.id}) }}">View</a> |
+              <a href="{{ path('memberships_edit', {'id': membership.id}) }}">Edit</a> |
+
+              <!-- Delete Form -->
+              <form action="{{ path('memberships_delete', {'id': membership.id}) }}" method="post" onsubmit="return confirm('Are you sure you want to delete this membership?');" style="display:inline;">
+                <input type="hidden" name="_method" value="DELETE">
+                <button type="submit" style="color:red; background: none; border: none; cursor: pointer;">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="5">No memberships found.</td></tr>
+        {% endfor %}
+      </tbody>
     </table>
+  </div>
+{% endblock %}
+
+{% block stylesheets %}
+  <style>
+    .container { width: 80%; margin: 0 auto; padding: 20px; }
+    h1 { text-align: center; margin-bottom: 20px; }
+    .action-button { text-align: right; margin-bottom: 20px; }
+    .action-button a { padding: 10px 20px; background: #4CAF50; color: #fff; border-radius: 5px; text-decoration: none; }
+    .action-button a:hover { background: #45a049; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; }
+    th { background: #f2f2f2; }
+    tr{ background: #f9f9f9; }
+    a { color: #4CAF50; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    button { cursor: pointer; }
+  </style>
 {% endblock %}

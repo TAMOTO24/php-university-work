@@ -1,0 +1,39 @@
+{# templates/club_members/edit.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Редагувати учасника{% endblock %}
+
+{% block body %}
+    <h1 class="text-center mt-4">Редагувати учасника</h1>
+
+    <form method="post" action="{{ path('club_members_edit', {'id': club_member.id}) }}" class="form-group">
+    <input type="hidden" name="_token" value="{{ csrf_token('edit' ~ club_member.id) }}">
+
+    <div class="form-group">
+        <label for="full_name">Ім'я</label>
+        <input type="text" id="full_name" name="full_name" class="form-control" value="{{ club_member.fullName }}" required>
+    </div>
+
+    <div class="form-group">
+        <label for="login">Логін</label>
+        <input type="text" id="login" name="login" class="form-control" value="{{ club_member.login }}" required>
+    </div>
+
+    <div class="form-group">
+        <label for="mail">Пошта</label>
+        <input type="email" id="mail" name="mail" class="form-control" value="{{ club_member.mail }}" required>
+    </div>
+
+    <div class="form-group">
+        <label for="is_trainer">Роль</label>
+        <select id="is_trainer" name="is_trainer" class="form-control">
+            <option value="1" {% if club_member.isTrainer %}selected{% endif %}>Тренер</option>
+            <option value="0" {% if not club_member.isTrainer %}selected{% endif %}>Клієнт</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Зберегти зміни</button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Trainer{% endblock %}
+
+{% block body %}
+    <h1>Edit Trainer</h1>
+    <form action="{{ path('trainers_edit', {'id': trainer.id}) }}" method="POST">
+        <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" name="fullName" value="{{ trainer.fullName }}" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" class="form-control">{{ trainer.description }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="type">Type</label>
+            <input type="text" id="type" name="type" value="{{ trainer.type }}" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-success">Update Trainer</button>
+    </form>
+{% endblock %}

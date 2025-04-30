@@ -1,15 +1,13 @@
 <?php
-
 namespace App\Controller;
 
-use App\Entity\ClubMembers;
-use App\Entity\Sessions;
 use App\Entity\Memberships;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[Route('/memberships')]
 class MembershipsController extends AbstractController
@@ -18,27 +16,59 @@ class MembershipsController extends AbstractController
     public function index(EntityManagerInterface $em): Response
     {
         $memberships = $em->getRepository(Memberships::class)->findAll();
-        return $this->json($memberships);
+        return $this->render('memberships/index.html.twig', [
+            'memberships' => $memberships
+        ]);
     }
 
-    #[Route('/new', name: 'memberships_new', methods: ['POST'])]
+    #[Route('/new', name: 'memberships_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
-        $member = $em->getRepository(ClubMembers::class)->find($request->request->get('member_id'));
-        $session = $em->getRepository(Sessions::class)->find($request->request->get('session_id'));
+        if ($request->isMethod('POST')) {
+            $name = $request->request->get('name');
+            $title = $request->request->get('title');
+            $description = $request->request->get('description');
 
-        if (!$member || !$session) {
-            return $this->json(['error' => 'Member or Session not found'], Response::HTTP_BAD_REQUEST);
+            $membership = new Memberships();
+            $membership->setName($name);
+            $membership->setTitle($title);
+            $membership->setDescription($description);
+
+            $em->persist($membership);
+            $em->flush();
+
+            return $this->redirectToRoute('memberships_index');
         }
 
-        $membership = new Memberships();
-        $membership->setMember($member);
-        $membership->setSession($session);
+        return $this->render('memberships/new.html.twig');
+    }
 
-        $em->persist($membership);
-        $em->flush();
+    #[Route('/{id}/edit', name: 'memberships_edit', methods: ['GET', 'POST'])]
+    public function edit(int $id, Request $request, EntityManagerInterface $em): Response
+    {
+        $membership = $em->getRepository(Memberships::class)->find($id);
 
-        return $this->json($membership, Response::HTTP_CREATED);
+        if (!$membership) {
+            return $this->json(['error' => 'Membership not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($request->isMethod('POST')) {
+            $name = $request->request->get('name');
+            $title = $request->request->get('title');
+            $description = $request->request->get('description');
+
+            $membership->setName($name);
+            $membership->setTitle($title);
+            $membership->setDescription($description);
+
+            $em->flush();
+
+            return $this->redirectToRoute('memberships_index');
+        }
+
+        return $this->render('memberships/edit.html.twig', [
+            'membership' => $membership
+        ]);
     }
 
     #[Route('/{id}', name: 'memberships_show', methods: ['GET'])]
@@ -50,45 +80,23 @@ class MembershipsController extends AbstractController
             return $this->json(['error' => 'Membership not found'], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->json($membership);
-    }
-
-    #[Route('/{id}/edit', name: 'memberships_edit', methods: ['POST'])]
-    public function edit(int $id, Request $request, EntityManagerInterface $em): Response
-    {
-        $membership = $em->getRepository(Memberships::class)->find($id);
-
-        if (!$membership) {
-            return $this->json(['error' => 'Membership not found'], Response::HTTP_NOT_FOUND);
-        }
-
-        $member = $em->getRepository(ClubMembers::class)->find($request->request->get('member_id'));
-        $session = $em->getRepository(Sessions::class)->find($request->request->get('session_id'));
-
-        if ($member) {
-            $membership->setMember($member);
-        }
-        if ($session) {
-            $membership->setSession($session);
-        }
-
-        $em->flush();
-
-        return $this->json($membership);
+        return $this->render('memberships/view.html.twig', [
+            'membership' => $membership
+        ]);
     }
 
     #[Route('/{id}', name: 'memberships_delete', methods: ['POST'])]
     public function delete(int $id, EntityManagerInterface $em): Response
     {
         $membership = $em->getRepository(Memberships::class)->find($id);
-
-        if (!$membership) {
-            return $this->json(['error' => 'Membership not found'], Response::HTTP_NOT_FOUND);
+    
+        if ($membership) {
+            $em->remove($membership);
+            $em->flush();
         }
-
-        $em->remove($membership);
-        $em->flush();
-
-        return $this->json(['message' => 'Membership deleted']);
+    
+        return $this->redirectToRoute('memberships_index');
     }
+    
 }
+

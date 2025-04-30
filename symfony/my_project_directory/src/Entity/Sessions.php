@@ -1,68 +1,49 @@
 <?php
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: 'App\Repository\SessionsRepository')]
+#[ORM\Entity]
+#[ORM\Table(name: 'sessions')]
 class Sessions
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: 'App\Entity\Exercises')]
-    #[ORM\JoinColumn(name: 'exercise_id', referencedColumnName: 'id')]
-    private ?Exercises $exercise = null;
-
-    #[ORM\ManyToOne(targetEntity: 'App\Entity\ClubMembers')]
-    #[ORM\JoinColumn(name: 'trainer_id', referencedColumnName: 'id')]
-    private ?ClubMembers $trainer = null;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $name = null;
 
     #[ORM\Column(type: 'datetime')]
-    private ?\DateTimeInterface $date_time = null;
+    private ?\DateTime $dateTime = null;
 
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $location = null;
-
-    // Геттеры и сеттеры
-
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getExercise(): ?Exercises
+    public function getName(): ?string
     {
-        return $this->exercise;
+        return $this->name;
     }
 
-    public function setExercise(?Exercises $exercise): self
+    public function setName(string $name): self
     {
-        $this->exercise = $exercise;
+        $this->name = $name;
         return $this;
     }
 
-    public function getTrainer(): ?ClubMembers
+    public function getDateTime(): ?\DateTime
     {
-        return $this->trainer;
+        return $this->dateTime;
     }
 
-    public function setTrainer(?ClubMembers $trainer): self
+    public function setDateTime(\DateTime $dateTime): self
     {
-        $this->trainer = $trainer;
-        return $this;
-    }
-
-    public function getDateTime(): ?\DateTimeInterface
-    {
-        return $this->date_time;
-    }
-
-    public function setDateTime(\DateTimeInterface $date_time): self
-    {
-        $this->date_time = $date_time;
+        $this->dateTime = $dateTime;
         return $this;
     }
 
@@ -77,3 +58,4 @@ class Sessions
         return $this;
     }
 }
+

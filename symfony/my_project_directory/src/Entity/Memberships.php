@@ -1,51 +1,62 @@
 <?php
-
 namespace App\Entity;
 
+use App\Repository\MembershipsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: 'App\Repository\MembershipsRepository')]
+#[ORM\Entity(repositoryClass: MembershipsRepository::class)]
+#[ORM\Table(name: 'memberships')]
 class Memberships
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private ?int $member_id = null;
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: 'App\Entity\ClubMembers')]
-    #[ORM\JoinColumn(name: 'member_id', referencedColumnName: 'id')]
-    private ?ClubMembers $member = null;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $name = null;
 
-    #[ORM\ManyToOne(targetEntity: 'App\Entity\Sessions')]
-    #[ORM\JoinColumn(name: 'session_id', referencedColumnName: 'id')]
-    private ?Sessions $session = null;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $title = null;
 
-    // Геттеры и сеттеры
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $description = null;
 
-    public function getMemberId(): ?int
+    public function getId(): ?int
     {
-        return $this->member_id;
+        return $this->id;
     }
 
-    public function getMember(): ?ClubMembers
+    public function getName(): ?string
     {
-        return $this->member;
+        return $this->name;
     }
 
-    public function setMember(?ClubMembers $member): self
+    public function setName(string $name): self
     {
-        $this->member = $member;
+        $this->name = $name;
         return $this;
     }
 
-    public function getSession(): ?Sessions
+    public function getTitle(): ?string
     {
-        return $this->session;
+        return $this->title;
     }
 
-    public function setSession(?Sessions $session): self
+    public function setTitle(string $title): self
     {
-        $this->session = $session;
+        $this->title = $title;
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
         return $this;
     }
 }

@@ -16,21 +16,27 @@ class TrainersController extends AbstractController
     public function index(EntityManagerInterface $em): Response
     {
         $trainers = $em->getRepository(Trainers::class)->findAll();
-        return $this->json($trainers);
+        return $this->render('trainers/index.html.twig', [
+            'trainers' => $trainers,
+        ]);
     }
 
-    #[Route('/new', name: 'trainers_new', methods: ['POST'])]
+    #[Route('/new', name: 'trainers_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
-        $trainer = new Trainers();
-        $trainer->setDescription($request->request->get('description'));
-        $trainer->setFullName($request->request->get('fullName'));
-        $trainer->setType($request->request->get('type'));
+        if ($request->isMethod('POST')) {
+            $trainer = new Trainers();
+            $trainer->setDescription($request->request->get('description'));
+            $trainer->setFullName($request->request->get('fullName'));
+            $trainer->setType($request->request->get('type'));
 
-        $em->persist($trainer);
-        $em->flush();
+            $em->persist($trainer);
+            $em->flush();
 
-        return $this->json($trainer, Response::HTTP_CREATED);
+            return $this->redirectToRoute('trainers_index');
+        }
+
+        return $this->render('trainers/new.html.twig');
     }
 
     #[Route('/{id}', name: 'trainers_show', methods: ['GET'])]
@@ -42,10 +48,12 @@ class TrainersController extends AbstractController
             return $this->json(['error' => 'Trainer not found'], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->json($trainer);
+        return $this->render('trainers/show.html.twig', [
+            'trainer' => $trainer,
+        ]);
     }
 
-    #[Route('/{id}/edit', name: 'trainers_edit', methods: ['POST'])]
+    #[Route('/{id}/edit', name: 'trainers_edit', methods: ['GET', 'POST'])]
     public function edit(int $id, Request $request, EntityManagerInterface $em): Response
     {
         $trainer = $em->getRepository(Trainers::class)->find($id);
@@ -54,13 +62,19 @@ class TrainersController extends AbstractController
             return $this->json(['error' => 'Trainer not found'], Response::HTTP_NOT_FOUND);
         }
 
-        $trainer->setDescription($request->request->get('description'));
-        $trainer->setFullName($request->request->get('fullName'));
-        $trainer->setType($request->request->get('type'));
+        if ($request->isMethod('POST')) {
+            $trainer->setDescription($request->request->get('description'));
+            $trainer->setFullName($request->request->get('fullName'));
+            $trainer->setType($request->request->get('type'));
 
-        $em->flush();
+            $em->flush();
 
-        return $this->json($trainer);
+            return $this->redirectToRoute('trainers_index');
+        }
+
+        return $this->render('trainers/edit.html.twig', [
+            'trainer' => $trainer,
+        ]);
     }
 
     #[Route('/{id}', name: 'trainers_delete', methods: ['POST'])]
@@ -75,6 +89,7 @@ class TrainersController extends AbstractController
         $em->remove($trainer);
         $em->flush();
 
-        return $this->json(['message' => 'Trainer deleted']);
+        return $this->redirectToRoute('trainers_index');
     }
 }
+
