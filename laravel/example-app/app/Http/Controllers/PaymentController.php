@@ -8,10 +8,30 @@ use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $payments = Payment::all();
-
+        $query = Payment::query();
+    
+        if ($request->has('id')) {
+            $query->where('id', $request->input('id'));
+        }
+    
+        if ($request->has('client_id')) {
+            $query->where('client_id', $request->input('client_id'));
+        }
+    
+        if ($request->has('amount')) {
+            $query->where('amount', $request->input('amount'));
+        }
+    
+        if ($request->has('payment_date')) {
+            $query->whereDate('payment_date', $request->input('payment_date'));
+        }
+    
+        $itemsPerPage = $request->input('itemsPerPage', 10);
+    
+        $payments = $query->paginate($itemsPerPage);
+    
         return view('payments.index', compact('payments'));
     }
 

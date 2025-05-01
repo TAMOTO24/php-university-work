@@ -7,10 +7,29 @@ use Illuminate\Http\Request;
 
 class TrainerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $trainers = Trainer::all();
-
+        $query = Trainer::query();
+    
+        if ($request->has('id')) {
+            $query->where('id', $request->input('id'));
+        }
+    
+        if ($request->has('first_name')) {
+            $query->where('first_name', 'like', '%' . $request->input('first_name') . '%');
+        }
+    
+        if ($request->has('last_name')) {
+            $query->where('last_name', 'like', '%' . $request->input('last_name') . '%');
+        }
+    
+        if ($request->has('specialization')) {
+            $query->where('specialization', 'like', '%' . $request->input('specialization') . '%');
+        }
+    
+        $itemsPerPage = $request->input('itemsPerPage', 10);
+        $trainers = $query->paginate($itemsPerPage);
+    
         return view('trainers.index', compact('trainers'));
     }
 

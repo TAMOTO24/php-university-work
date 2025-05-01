@@ -10,9 +10,36 @@ use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $appointments = Appointment::with(['client', 'trainer', 'program'])->get();
+        $query = Appointment::with(['client', 'trainer', 'program']);
+
+        # prototype /appointments?client_id=3&date=2024-04-01&itemsPerPage=5
+
+        if ($request->has('date')) {
+            $query->where('date', $request->input('date'));
+        }
+
+        if ($request->has('time')) {
+            $query->where('time', $request->input('time'));
+        }
+
+        if ($request->has('client_id')) {
+            $query->where('client_id', $request->input('client_id'));
+        }
+
+        if ($request->has('trainer_id')) {
+            $query->where('trainer_id', $request->input('trainer_id'));
+        }
+
+        if ($request->has('program_id')) {
+            $query->where('program_id', $request->input('program_id'));
+        }
+
+        $itemsPerPage = $request->input('itemsPerPage', 10);
+
+        $appointments = $query->paginate($itemsPerPage);
+
         return view('appointments.index', compact('appointments'));
     }
 

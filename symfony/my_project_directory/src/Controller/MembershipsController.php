@@ -8,16 +8,45 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 #[Route('/memberships')]
 class MembershipsController extends AbstractController
 {
     #[Route('/', name: 'memberships_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $em): Response
+    public function index(Request $request, EntityManagerInterface $em): Response
     {
-        $memberships = $em->getRepository(Memberships::class)->findAll();
+        $qb = $em->getRepository(Memberships::class)->createQueryBuilder('m');
+    
+        if ($request->query->get('id')) {
+            $qb->andWhere('m.id = :id')->setParameter('id', $request->query->get('id'));
+        }
+    
+        if ($request->query->get('name')) {
+            $qb->andWhere('m.name LIKE :name')->setParameter('name', '%' . $request->query->get('name') . '%');
+        }
+    
+        if ($request->query->get('title')) {
+            $qb->andWhere('m.title LIKE :title')->setParameter('title', '%' . $request->query->get('title') . '%');
+        }
+    
+        if ($request->query->get('description')) {
+            $qb->andWhere('m.description LIKE :description')->setParameter('description', '%' . $request->query->get('description') . '%');
+        }
+    
+        $itemsPerPage = $request->query->getInt('itemsPerPage', 10);
+        $page = $request->query->getInt('page', 1);
+    
+        $query = $qb->getQuery()
+            ->setFirstResult(($page - 1) * $itemsPerPage)
+            ->setMaxResults($itemsPerPage);
+    
+        $paginator = new Paginator($query);
+    
         return $this->render('memberships/index.html.twig', [
-            'memberships' => $memberships
+            'memberships' => $paginator,
+            'page' => $page,
+            'itemsPerPage' => $itemsPerPage,
         ]);
     }
 

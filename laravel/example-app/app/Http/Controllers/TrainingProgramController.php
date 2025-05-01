@@ -7,10 +7,29 @@ use Illuminate\Http\Request;
 
 class TrainingProgramController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $trainingPrograms = TrainingProgram::all();
-
+        $query = TrainingProgram::query();
+    
+        if ($request->has('id')) {
+            $query->where('id', $request->input('id'));
+        }
+    
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->input('name') . '%');
+        }
+    
+        if ($request->has('description')) {
+            $query->where('description', 'like', '%' . $request->input('description') . '%');
+        }
+    
+        if ($request->has('time')) {
+            $query->where('time', $request->input('time'));
+        }
+    
+        $itemsPerPage = $request->input('itemsPerPage', 10);
+        $trainingPrograms = $query->paginate($itemsPerPage);
+    
         return view('training-programs.index', compact('trainingPrograms'));
     }
 

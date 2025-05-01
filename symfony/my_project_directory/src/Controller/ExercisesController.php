@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class ExercisesController extends AbstractController
 {
@@ -29,11 +30,43 @@ class ExercisesController extends AbstractController
     }
 
     #[Route('/exercises', name: 'exercises_index', methods: ['GET'])]
-    public function index(): Response
+    public function index(Request $request, EntityManagerInterface $em): Response
     {
-        $exercises = $this->exercisesRepository->findAll();
+        $qb = $em->getRepository(Exercises::class)->createQueryBuilder('e');
+    
+        if ($request->query->get('id')) {
+            $qb->andWhere('e.id = :id')->setParameter('id', $request->query->get('id'));
+        }
+    
+        if ($request->query->get('trainerID')) {
+            $qb->andWhere('e.trainerID = :trainerID')->setParameter('trainerID', $request->query->get('trainerID'));
+        }
+    
+        if ($request->query->get('exercise')) {
+            $qb->andWhere('e.exercise LIKE :exercise')->setParameter('exercise', '%' . $request->query->get('exercise') . '%');
+        }
+    
+        if ($request->query->get('title')) {
+            $qb->andWhere('e.title LIKE :title')->setParameter('title', '%' . $request->query->get('title') . '%');
+        }
+    
+        if ($request->query->get('time')) {
+            $qb->andWhere('e.time = :time')->setParameter('time', $request->query->get('time'));
+        }
+    
+        $itemsPerPage = $request->query->getInt('itemsPerPage', 10);
+        $page = $request->query->getInt('page', 1);
+    
+        $query = $qb->getQuery()
+            ->setFirstResult(($page - 1) * $itemsPerPage)
+            ->setMaxResults($itemsPerPage);
+    
+        $paginator = new Paginator($query);
+    
         return $this->render('exercises/index.html.twig', [
-            'exercises' => $exercises,
+            'exercises' => $paginator,
+            'page' => $page,
+            'itemsPerPage' => $itemsPerPage,
         ]);
     }
 

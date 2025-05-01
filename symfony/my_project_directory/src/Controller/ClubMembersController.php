@@ -8,15 +8,48 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class ClubMembersController extends AbstractController
 {
     #[Route('/club_members', name: 'club_members_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $em): Response
+    public function index(Request $request, EntityManagerInterface $em): Response
     {
-        $clubMembers = $em->getRepository(ClubMembers::class)->findAll();
+        $qb = $em->getRepository(ClubMembers::class)->createQueryBuilder('c');
+
+        if ($request->query->get('id')) {
+            $qb->andWhere('c.id = :id')->setParameter('id', $request->query->get('id'));
+        }
+
+        if ($request->query->get('fullName')) {
+            $qb->andWhere('c.fullName LIKE :fullName')->setParameter('fullName', '%' . $request->query->get('fullName') . '%');
+        }
+
+        if ($request->query->get('login')) {
+            $qb->andWhere('c.login LIKE :login')->setParameter('login', '%' . $request->query->get('login') . '%');
+        }
+
+        if ($request->query->get('isTrainer') !== null) {
+            $qb->andWhere('c.isTrainer = :isTrainer')->setParameter('isTrainer', (bool) $request->query->get('isTrainer'));
+        }
+
+        if ($request->query->get('mail')) {
+            $qb->andWhere('c.mail LIKE :mail')->setParameter('mail', '%' . $request->query->get('mail') . '%');
+        }
+
+        $itemsPerPage = $request->query->getInt('itemsPerPage', 10);
+        $page = $request->query->getInt('page', 1);
+
+        $query = $qb->getQuery()
+            ->setFirstResult(($page - 1) * $itemsPerPage)
+            ->setMaxResults($itemsPerPage);
+
+        $paginator = new Paginator($query);
+
         return $this->render('club_members/index.html.twig', [
-            'club_members' => $clubMembers,
+            'club_members' => $paginator,
+            'page' => $page,
+            'itemsPerPage' => $itemsPerPage,
         ]);
     }
 
