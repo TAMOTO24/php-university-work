@@ -8,7 +8,11 @@ use App\Http\Controllers\{
     TrainerController,
     TrainingProgramController
 };
+use App\Http\Controllers\AuthController;
 
+// Route::post('register', [AuthController::class, 'register']);
+// Route::post('login', [AuthController::class, 'login']);
+// Route::middleware('auth:api')->get('user', [AuthController::class, 'me']);
 Route::resource('appointments', AppointmentController::class);
 Route::resource('clients', ClientController::class);
 Route::resource('payments', PaymentController::class);
